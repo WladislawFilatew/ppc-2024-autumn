@@ -22,7 +22,7 @@ public:
   void getAlfa(double alfa);
   int rankMatrix(std::vector<int>& matrixT, int n);
   int rankRMatrix();
-  double determinant(std::vector<int>& matrix, int size);
+  double determinant();
 
 private:
   int size;

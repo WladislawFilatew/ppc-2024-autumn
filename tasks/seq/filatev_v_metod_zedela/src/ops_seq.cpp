@@ -24,7 +24,7 @@ bool filatev_v_metod_zedela_seq::MetodZedela::validation() {
   int rank = rankMatrix(matrix, size);
   if (rank != rankRMatrix())
     return false;
-  if (rank == 0 || determinant(matrix, size) == 0)
+  if (rank == 0 || determinant() == 0)
     return false;
   for (int i = 0; i < size; ++i) {
 		int sum = 0;
@@ -132,30 +132,33 @@ int filatev_v_metod_zedela_seq::MetodZedela::rankMatrix(std::vector<int>& matrix
 	return rank;
 }
 
-double filatev_v_metod_zedela_seq::MetodZedela::determinant(std::vector<int>& _matrix, int _size) {
-    if (_size == 1) {
-        return _matrix[0];
-    }
-    if (_size == 2) {
-        return _matrix[0] * _matrix[3] - _matrix[1] * _matrix[2];
-    }
+double filatev_v_metod_zedela_seq::MetodZedela::determinant() {
+    std::vector<double> L(size * size, 0.0);
+    std::vector<double> U(size * size, 0.0);
 
-    double det = 0.0;
-
-    for (int col = 0; col < _size; ++col) {
-        std::vector<int> minor((_size - 1) * (_size - 1));
-        for (int i = 1; i < _size; ++i) {
-            for (int j = 0; j < _size; ++j) {
-                if (j < col) {
-                    minor[(i - 1) * (_size - 1) + j] = _matrix[i * _size + j];
-                } else if (j > col) {
-                    minor[(i - 1) * (_size - 1) + j - 1] = _matrix[i * _size + j];
-                }
+    for (int i = 0; i < size; i++) {
+        for (int j = i; j < size; j++) {
+            U[i * size + j] = matrix[i * size + j];
+            for (int k = 0; k < i; k++) {
+                U[i * size + j] -= L[i * size + k] * U[k * size + j];
             }
         }
-        det += ((col % 2 == 0) ? 1 : -1) * _matrix[col] * determinant(minor, _size - 1);
+
+        for (int j = i + 1; j < size; j++) {
+            L[j * size + i] = matrix[j * size + i];
+            for (int k = 0; k < i; k++) {
+                L[j * size + i] -= L[j * size + k] * U[k * size + i];
+            }
+            L[j * size + i] /= U[i * size + i];
+        }
+
+        L[i * size + i] = 1;
     }
 
+    double det = 1.0;
+    for (int i = 0; i < size; i++) {
+        det *= U[i * size + i];
+    }
     return det;
 }
 
