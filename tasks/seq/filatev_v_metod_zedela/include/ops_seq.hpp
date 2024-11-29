@@ -19,7 +19,7 @@ public:
   bool run() override;
   bool post_processing() override;
 
-  void getAlfa(double alfa);
+  void setAlfa(double alfa);
   int rankMatrix(std::vector<int>& matrixT, int n);
   int rankRMatrix();
   double determinant();

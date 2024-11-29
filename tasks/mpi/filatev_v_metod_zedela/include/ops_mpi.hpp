@@ -15,35 +15,40 @@
 
 namespace filatev_v_metod_zedela_mpi {
 
-class SumMatrixSeq : public ppc::core::Task {
+class MetodZedela : public ppc::core::Task {
  public:
-  explicit SumMatrixSeq(std::shared_ptr<ppc::core::TaskData> taskData_) : Task(std::move(taskData_)) {}
+  explicit MetodZedela(std::shared_ptr<ppc::core::TaskData> taskData_);
   bool pre_processing() override;
   bool validation() override;
   bool run() override;
   bool post_processing() override;
 
+  void setAlfa(double alfa);
+  int rankMatrix(std::vector<int>& matrixT, int n);
+  int rankRMatrix();
+  double determinant();
+
  private:
+  boost::mpi::communicator world;
+  boost::mpi::status status;
+  int size;
+  double alfa;
   std::vector<int> matrix;
-  long long summ = 0;
-  int size_n, size_m;
+  std::vector<int> tMatrix;
+  std::vector<int> bVectrot;
+  std::vector<double> answer;
+  std::vector<int> delit;
 };
 
-class SumMatrixParallel : public ppc::core::Task {
- public:
-  explicit SumMatrixParallel(std::shared_ptr<ppc::core::TaskData> taskData_, boost::mpi::communicator world)
-      : Task(std::move(taskData_)), world(std::move(world)) {};
-  bool pre_processing() override;
-  bool validation() override;
-  bool run() override;
-  bool post_processing() override;
-
- private:
-  std::vector<int> matrix;
-  long long summ = 0;
-  std::vector<int> local_vector;
-  int size_n, size_m;
-  boost::mpi::communicator world;
+class TestClassForMetodZedela {
+public:
+  int generatorVector(std::vector<int>& vec);
+  void generatorMatrix(std::vector<int>& matrix, int size);
+  void genetatirVectorB(std::vector<int>& matrix, std::vector<int>& vecB);
+  void coutSLU(std::vector<int> matrix, std::vector<int> vecB);
+  bool rightAns(std::vector<double>& ans, double alfa);
+private:
+  std::vector<int> ans;
 };
 
 }  // namespace filatev_v_metod_zedela_mpi

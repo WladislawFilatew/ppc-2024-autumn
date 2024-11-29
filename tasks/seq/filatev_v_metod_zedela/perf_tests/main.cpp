@@ -8,7 +8,7 @@
 
 TEST(filatev_v_metod_zedela_seq, test_pipeline_run) {
   int size = 500;
-  double alfa = 0.00000000001;
+  double alfa = 0.000000001;
   std::vector<int> matrix(size*size);
   std::vector<int> vecB(size);
   std::vector<double> answer;
@@ -24,6 +24,15 @@ TEST(filatev_v_metod_zedela_seq, test_pipeline_run) {
   taskData->outputs_count.emplace_back(size);
 
   auto metodZedela = std::make_shared<filatev_v_metod_zedela_seq::MetodZedela>(taskData);
+  metodZedela->setAlfa(alfa);
+
+  ASSERT_EQ(metodZedela->validation(), true);
+  metodZedela->pre_processing();
+  metodZedela->run();
+  metodZedela->post_processing();
+  auto* temp = reinterpret_cast<double*>(taskData->outputs[0]);
+  answer.insert(answer.end(), temp, temp + size);
+
 
   auto perfAttr = std::make_shared<ppc::core::PerfAttr>();
   perfAttr->num_running = 10;
@@ -39,12 +48,13 @@ TEST(filatev_v_metod_zedela_seq, test_pipeline_run) {
   auto perfAnalyzer = std::make_shared<ppc::core::Perf>(metodZedela);
   perfAnalyzer->pipeline_run(perfAttr, perfResults);
   ppc::core::Perf::print_perf_statistic(perfResults);
+
   ASSERT_EQ(test.rightAns(answer, alfa), true);
 }
 
 TEST(filatev_v_metod_zedela_seq, test_task_run) {
   int size = 500;
-  double alfa = 0.00000000001;
+  double alfa = 0.000000001;
   std::vector<int> matrix(size*size);
   std::vector<int> vecB(size);
   std::vector<double> answer;
@@ -60,6 +70,14 @@ TEST(filatev_v_metod_zedela_seq, test_task_run) {
   taskData->outputs_count.emplace_back(size);
 
   auto metodZedela = std::make_shared<filatev_v_metod_zedela_seq::MetodZedela>(taskData);
+  metodZedela->setAlfa(alfa);
+
+  ASSERT_EQ(metodZedela->validation(), true);
+  metodZedela->pre_processing();
+  metodZedela->run();
+  metodZedela->post_processing();
+  auto* temp = reinterpret_cast<double*>(taskData->outputs[0]);
+  answer.insert(answer.end(), temp, temp + size);
 
   auto perfAttr = std::make_shared<ppc::core::PerfAttr>();
   perfAttr->num_running = 10;
@@ -75,5 +93,6 @@ TEST(filatev_v_metod_zedela_seq, test_task_run) {
   auto perfAnalyzer = std::make_shared<ppc::core::Perf>(metodZedela);
   perfAnalyzer->task_run(perfAttr, perfResults);
   ppc::core::Perf::print_perf_statistic(perfResults);
+
   ASSERT_EQ(test.rightAns(answer, alfa), true);
 }

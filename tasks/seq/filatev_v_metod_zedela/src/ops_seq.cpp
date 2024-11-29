@@ -58,11 +58,13 @@ bool filatev_v_metod_zedela_seq::MetodZedela::run() {
 
   std::vector<double> it1(size, 0);
   std::vector<double> it2(size); //prev
-  double max_z = 0;
+  double sum1 = 0;
+  double sum2 = 0;
 
   do{
-    max_z = 0;
-    swap(it1,it2);
+    std::swap(it1,it2);
+    std::swap(sum1, sum2);
+    sum1 = 0;
     for (int i = 0; i < size; ++i) {
 	    double sum = 0;
       for (int j = 0; j < i; ++j) {
@@ -73,11 +75,9 @@ bool filatev_v_metod_zedela_seq::MetodZedela::run() {
         sum += it2[j] * matrix[i * size + j];
       }
       it1[i] = double(sum) / delit[i];
+      sum1 += it1[i];
     }
-    for (int i = 0; i < it1.size(); ++i) {
-	    max_z += abs(it1[i] - it2[i]);
-    }
-  } while (max_z > alfa);
+  } while (abs(sum1 - sum2) > alfa);
 
   answer = it1;
 
@@ -90,7 +90,7 @@ bool filatev_v_metod_zedela_seq::MetodZedela::post_processing() {
   return true;
 }
 
-void filatev_v_metod_zedela_seq::MetodZedela::getAlfa(double _alfa){
+void filatev_v_metod_zedela_seq::MetodZedela::setAlfa(double _alfa){
   this->alfa = _alfa;
 }
 
@@ -154,6 +154,8 @@ double filatev_v_metod_zedela_seq::MetodZedela::determinant() {
 
         L[i * size + i] = 1;
     }
+
+    
 
     double det = 1.0;
     for (int i = 0; i < size; i++) {
