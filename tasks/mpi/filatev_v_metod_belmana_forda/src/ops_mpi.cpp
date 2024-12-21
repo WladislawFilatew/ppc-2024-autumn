@@ -75,11 +75,11 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     return true;
   }
 
-  int delta = n / (world.size() - 1);
-  int ost = n % (world.size() - 1);
+  int delta = n / world.size();
+  int ost = n % world.size();
 
-  int start_v = (world.rank() == 0) ? 0 : delta * (world.rank() - 1) + ost;
-  int stop_v = (world.rank() == 0) ? ost : delta * world.rank() + ost;
+  int start_v = (world.rank() < ost) ? (delta + 1) * world.rank() : (delta + 1) * ost + world.rank() * delta;
+  int stop_v = (world.rank() < ost) ? (delta + 1) * (world.rank() + 1) : (delta + 1) * ost + (world.rank() + 1) * delta;
 
   if (world.rank() != 0) {
     Xadj.resize(n + 1);
@@ -88,14 +88,32 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
 
   std::vector<int> distribution(world.size(), 0);
   std::vector<int> displacement(world.size(), 0);
-  int count_p = Xadj[ost];
-  distribution[0] = Xadj[ost];
+  int prev = Xadj[(ost == 0) ? delta : delta + 1];
+  distribution[0] = prev;
   for (int i = 1; i < world.size(); i++) {
-    int count = Xadj[delta * i + ost] - Xadj[delta * (i - 1) + ost];
-    distribution[i] = count;
-    displacement[i] = displacement[i - 1] + count_p;
-    count_p = count;
+    int teck = 0;
+    if (i < ost) {
+      teck = Xadj[(delta + 1) * (i + 1)];
+    } else {
+      teck = Xadj[(delta + 1) * ost + delta * (i + 1 - ost)];
+    }
+    distribution[i] = teck - prev;
+    displacement[i] = displacement[i - 1] + distribution[i - 1];
+    prev = teck;
   }
+
+  // if (world.rank() == 0) {
+  //   std::string s = "\n count: ";
+  //   for (int i = 0; i < world.size(); i++) {
+  //     s += std::to_string(distribution[i]) + " ";
+  //   }
+  //   std::cerr << s << "\n";
+  //   s = "\n position: ";
+  //   for (int i = 0; i < world.size(); i++) {
+  //     s += std::to_string(displacement[i]) + " ";
+  //   }
+  //   std::cerr << s << "\n";
+  // }
 
   int local_size = distribution[world.rank()];
   std::vector<int> local_Adjncy(local_size);
@@ -110,6 +128,7 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     bool stop = true;
     bool local_stop = true;
     for (int v = start_v; v < stop_v; v++) {
+      if (v > Xadj.size() - 2) continue;
       for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
         int l_posit = t - Xadj[start_v];
         if (d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
