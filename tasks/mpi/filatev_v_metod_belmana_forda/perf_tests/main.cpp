@@ -8,7 +8,6 @@
 #include "core/perf/include/perf.hpp"
 #include "mpi/filatev_v_metod_belmana_forda/include/ops_mpi.hpp"
 
-
 TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
   boost::mpi::communicator world;
   int n = 9000;
@@ -23,19 +22,19 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
 
   if (world.rank() == 0) {
     Adjncy.resize(m, 0);
-    Xadj.resize(n + 1);;
+    Xadj.resize(n + 1);
     Eweights.resize(m, 1);
     d.resize(n);
 
     for (int i = 0, k = 0; i < n; i++) {
-        Xadj[i] = k;
-        for (int j = 0; j < n; j++) {
-            if (i != j) {
-                Adjncy[k] = j;
-                Eweights[k] = 1;
-                k++;
-            }
+      Xadj[i] = k;
+      for (int j = 0; j < n; j++) {
+        if (i != j) {
+          Adjncy[k] = j;
+          Eweights[k] = 1;
+          k++;
         }
+      }
     }
     Xadj[n] = m;
 
@@ -68,11 +67,11 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
   auto perfResults = std::make_shared<ppc::core::PerfResults>();
   auto perfAnalyzer = std::make_shared<ppc::core::Perf>(metodBelmanaForda);
   perfAnalyzer->pipeline_run(perfAttr, perfResults);
-  
+
   if (world.rank() == 0) {
     ppc::core::Perf::print_perf_statistic(perfResults);
 
-    std::vector<int> tResh(n,1);
+    std::vector<int> tResh(n, 1);
     tResh[0] = 0;
 
     ASSERT_EQ(tResh, d);
@@ -93,19 +92,19 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_task_run) {
 
   if (world.rank() == 0) {
     Adjncy.resize(m, 0);
-    Xadj.resize(n + 1);;
+    Xadj.resize(n + 1);
     Eweights.resize(m, 1);
     d.resize(n);
 
     for (int i = 0, k = 0; i < n; i++) {
-        Xadj[i] = k;
-        for (int j = 0; j < n; j++) {
-            if (i != j) {
-                Adjncy[k] = j;
-                Eweights[k] = 1;
-                k++;
-            }
+      Xadj[i] = k;
+      for (int j = 0; j < n; j++) {
+        if (i != j) {
+          Adjncy[k] = j;
+          Eweights[k] = 1;
+          k++;
         }
+      }
     }
     Xadj[n] = m;
 
@@ -125,7 +124,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_task_run) {
   metodBelmanaForda->pre_processing();
   metodBelmanaForda->run();
   metodBelmanaForda->post_processing();
-  
+
   auto perfAttr = std::make_shared<ppc::core::PerfAttr>();
   perfAttr->num_running = 10;
   const auto t0 = std::chrono::high_resolution_clock::now();
@@ -134,14 +133,14 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_task_run) {
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(current_time_point - t0).count();
     return static_cast<double>(duration) * 1e-9;
   };
-  
+
   auto perfResults = std::make_shared<ppc::core::PerfResults>();
   auto perfAnalyzer = std::make_shared<ppc::core::Perf>(metodBelmanaForda);
   perfAnalyzer->task_run(perfAttr, perfResults);
   if (world.rank() == 0) {
     ppc::core::Perf::print_perf_statistic(perfResults);
 
-    std::vector<int> tResh(n,1);
+    std::vector<int> tResh(n, 1);
     tResh[0] = 0;
 
     ASSERT_EQ(tResh, d);

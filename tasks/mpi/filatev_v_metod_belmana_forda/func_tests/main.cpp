@@ -9,7 +9,6 @@
 
 #include "mpi/filatev_v_metod_belmana_forda/include/ops_mpi.hpp"
 
-
 TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path) {
   boost::mpi::communicator world;
   int n = 6;
@@ -91,7 +90,6 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path2) {
     std::vector<int> tResh = {0, 1, 1, 1};
     ASSERT_EQ(tResh, d);
   }
-
 }
 
 TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path3) {
@@ -133,7 +131,6 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path3) {
     std::vector<int> tResh = {0, 7, 5, 7, 6, 8, 10};
     ASSERT_EQ(tResh, d);
   }
-
 }
 
 TEST(filatev_v_metod_belmana_forda_mpi, test_error) {
