@@ -27,7 +27,6 @@ class MetodBelmanaForda : public ppc::core::Task {
   std::vector<int> Xadj;
   std::vector<int> Eweights;
   std::vector<int> d;
-
 };
 
 }  // namespace filatev_v_metod_belmana_forda_seq

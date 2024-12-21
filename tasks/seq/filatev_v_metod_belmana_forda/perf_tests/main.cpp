@@ -62,7 +62,6 @@ TEST(filatev_v_metod_belmana_forda_seq, test_pipeline_run) {
   std::vector<int> tResh(n, 1);
   tResh[0] = 0;
 
-
   ASSERT_EQ(tResh, d);
 }
 

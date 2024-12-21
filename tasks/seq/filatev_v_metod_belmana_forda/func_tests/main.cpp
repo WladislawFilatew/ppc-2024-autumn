@@ -98,7 +98,6 @@ TEST(filatev_v_metod_belmana_forda_seq, test_simpel_path3) {
   std::vector<int> tResh = {0, 7, 5, 7, 6, 8, 10};
 
   ASSERT_EQ(tResh, d);
-
 }
 
 TEST(filatev_v_metod_belmana_forda_seq, test_error) {

@@ -45,7 +45,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path) {
   metodBelmanaForda.run();
   metodBelmanaForda.post_processing();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     std::vector<int> tResh = {0, 6, 9, 5, 4, 7};
 
     ASSERT_EQ(tResh, d);
@@ -64,7 +64,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path2) {
 
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     Adjncy = {1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2};
     Xadj = {0, 3, 6, 9, 12, 12};
     Eweights.assign(m, 1);
@@ -87,7 +87,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path2) {
   metodBelmanaForda.run();
   metodBelmanaForda.post_processing();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     std::vector<int> tResh = {0, 1, 1, 1};
     ASSERT_EQ(tResh, d);
   }
@@ -106,7 +106,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path3) {
 
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     Adjncy = {1, 2, 3, 6, 1, 4, 5, 4, 3, 0, 6, 0};
     Xadj = {0, 2, 4, 7, 8, 9, 11, 12};
     Eweights = {8, 5, 1, 8, 2, 1, 3, 2, 1, 5, 2, 4};
@@ -129,7 +129,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_simpel_path3) {
   metodBelmanaForda.run();
   metodBelmanaForda.post_processing();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     std::vector<int> tResh = {0, 7, 5, 7, 6, 8, 10};
     ASSERT_EQ(tResh, d);
   }
@@ -147,7 +147,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_error) {
 
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     Adjncy = {1, 2, 3, 6, 1, 4, 5, 4, 3, 0, 6, 0};
     Xadj = {0, 2, 4, 7, 8, 9, 11, 12};
     Eweights = {8, 5, 1, 8, 2, 1, 3, 2, 1, 5, 2, 4};
@@ -181,7 +181,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_error_2) {
 
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     Adjncy = {1, 2, 3, 6, 1, 4, 5, 4, 3, 0, 6, 0};
     Xadj = {0, 2, 4, 7, 8, 9, 11, 12};
     Eweights = {8, 5, 1, 8, 2, 1, 3, 2, 1, 5, 2, 4};
@@ -216,7 +216,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_error_3) {
 
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     Adjncy = {1, 2, 3, 6, 1, 4, 5, 4, 3, 0, 6, 0};
     Xadj = {0, 2, 4, 7, 8, 9, 11, 12};
     Eweights = {8, 5, 1, 8, 2, 1, 3, 2, 1, 5, 2, 4};
@@ -250,7 +250,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_error_4) {
 
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
 
-  if (world.rank() == 0){
+  if (world.rank() == 0) {
     Adjncy = {1, 2, 3, 6, 1, 4, 5, 4, 3, 0, 6, 0};
     Xadj = {0, 2, 4, 7, 8, 9, 11, 12};
     Eweights = {8, 5, 1, 8, 2, 1, 3, 2, 1, 5, 2, 4};
