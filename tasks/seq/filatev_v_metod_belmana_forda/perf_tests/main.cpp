@@ -6,8 +6,8 @@
 #include "core/perf/include/perf.hpp"
 #include "seq/filatev_v_metod_belmana_forda/include/ops_seq.hpp"
 
-TEST(filatev_v_metod_belmana_forda, test_pipeline_run) {
-  int n = 700; 
+TEST(filatev_v_metod_belmana_forda_seq, test_pipeline_run) {
+  int n = 9000;
   int m = n * (n - 1);
   int start = 0;
   std::vector<int> Adjncy(m, 0);
@@ -16,14 +16,14 @@ TEST(filatev_v_metod_belmana_forda, test_pipeline_run) {
   std::vector<int> d(n);
 
   for (int i = 0, k = 0; i < n; i++) {
-      Xadj[i] = k;
-      for (int j = 0; j < n; j++) {
-          if (i != j) {
-              Adjncy[k] = j;
-              Eweights[k] = 1;
-              k++;
-          }
+    Xadj[i] = k;
+    for (int j = 0; j < n; j++) {
+      if (i != j) {
+        Adjncy[k] = j;
+        Eweights[k] = 1;
+        k++;
       }
+    }
   }
   Xadj[n] = m;
 
@@ -59,15 +59,15 @@ TEST(filatev_v_metod_belmana_forda, test_pipeline_run) {
   perfAnalyzer->pipeline_run(perfAttr, perfResults);
   ppc::core::Perf::print_perf_statistic(perfResults);
 
-  std::vector<int> tResh(n,1);
+  std::vector<int> tResh(n, 1);
   tResh[0] = 0;
 
 
   ASSERT_EQ(tResh, d);
 }
 
-TEST(filatev_v_metod_belmana_forda, test_task_run) {
-  int n = 700; 
+TEST(filatev_v_metod_belmana_forda_seq, test_task_run) {
+  int n = 9000;
   int m = n * (n - 1);
   int start = 0;
   std::vector<int> Adjncy(m, 0);
@@ -76,14 +76,14 @@ TEST(filatev_v_metod_belmana_forda, test_task_run) {
   std::vector<int> d(n);
 
   for (int i = 0, k = 0; i < n; i++) {
-      Xadj[i] = k;
-      for (int j = 0; j < n; j++) {
-          if (i != j) {
-              Adjncy[k] = j;
-              Eweights[k] = 1;
-              k++;
-          }
+    Xadj[i] = k;
+    for (int j = 0; j < n; j++) {
+      if (i != j) {
+        Adjncy[k] = j;
+        Eweights[k] = 1;
+        k++;
       }
+    }
   }
   Xadj[n] = m;
 
@@ -119,7 +119,7 @@ TEST(filatev_v_metod_belmana_forda, test_task_run) {
   perfAnalyzer->task_run(perfAttr, perfResults);
   ppc::core::Perf::print_perf_statistic(perfResults);
 
-  std::vector<int> tResh(n,1);
+  std::vector<int> tResh(n, 1);
   tResh[0] = 0;
 
   ASSERT_EQ(tResh, d);

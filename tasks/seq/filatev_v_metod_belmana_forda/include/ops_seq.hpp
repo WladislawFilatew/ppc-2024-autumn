@@ -1,25 +1,25 @@
 // Filatev Vladislav Metod Belmana Forda
 #pragma once
 
+#include <algorithm>
+#include <iostream>
 #include <random>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <algorithm>
 
 #include "core/task/include/task.hpp"
 
 namespace filatev_v_metod_belmana_forda_seq {
 
 class MetodBelmanaForda : public ppc::core::Task {
-public:
+ public:
   explicit MetodBelmanaForda(std::shared_ptr<ppc::core::TaskData> taskData_) : Task(std::move(taskData_)) {};
   bool pre_processing() override;
   bool validation() override;
   bool run() override;
   bool post_processing() override;
 
-private:
+ private:
   int n;
   int m;
   int start;
@@ -27,8 +27,7 @@ private:
   std::vector<int> Xadj;
   std::vector<int> Eweights;
   std::vector<int> d;
- 
+
 };
 
 }  // namespace filatev_v_metod_belmana_forda_seq
-

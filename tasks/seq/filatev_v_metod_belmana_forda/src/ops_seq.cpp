@@ -1,8 +1,8 @@
 // Filatev Vladislav Metod Belmana Forda
 #include "seq/filatev_v_metod_belmana_forda/include/ops_seq.hpp"
 
-#include <thread>
 #include <queue>
+#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -42,15 +42,20 @@ bool filatev_v_metod_belmana_forda_seq::MetodBelmanaForda::run() {
   d[start] = 0;
 
   for (int i = 0; i < n - 1; i++) {
+    bool stop = true;
     for (int v = 0; v < n; v++) {
       for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
         if (d[Adjncy[t]] > d[v] + Eweights[t]) {
           d[Adjncy[t]] = d[v] + Eweights[t];
+          stop = false;
         }
       }
     }
+    if (stop) {
+      break;
+    }
   }
-  
+
   return true;
 }
 

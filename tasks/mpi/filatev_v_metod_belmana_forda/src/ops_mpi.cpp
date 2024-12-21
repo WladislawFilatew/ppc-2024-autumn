@@ -2,11 +2,11 @@
 #include "mpi/filatev_v_metod_belmana_forda/include/ops_mpi.hpp"
 
 #include <algorithm>
+#include <boost/serialization/vector.hpp>
 #include <functional>
+#include <queue>
 #include <string>
 #include <vector>
-#include <queue>
-#include <boost/serialization/vector.hpp>
 
 bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::validation() {
   internal_order_test();
@@ -23,7 +23,7 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::validation() {
 bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::pre_processing() {
   internal_order_test();
   if (world.rank() == 0) {
-     this->n = taskData->inputs_count[0];
+    this->n = taskData->inputs_count[0];
     this->m = taskData->inputs_count[1];
     this->start = taskData->inputs_count[2];
 
@@ -50,7 +50,6 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
   d[start] = 0;
 
   if (world.size() == 1 || world.size() > n) {
-
     std::vector<int> update(n, false);
     update[start] = true;
 
@@ -72,23 +71,20 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
         }
       }
     }
-    
+
     return true;
   }
 
-
   int delta = n / (world.size() - 1);
-  int ost = n % (world.size() - 1); 
+  int ost = n % (world.size() - 1);
 
   int start_v = (world.rank() == 0) ? 0 : delta * (world.rank() - 1) + ost;
   int stop_v = (world.rank() == 0) ? ost : delta * world.rank() + ost;
 
-  
   if (world.rank() != 0) {
     Xadj.resize(n + 1);
   }
   boost::mpi::broadcast(world, Xadj.data(), n + 1, 0);
-
 
   std::vector<int> distribution(world.size(), 0);
   std::vector<int> displacement(world.size(), 0);
@@ -101,25 +97,34 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     count_p = count;
   }
 
-  std::vector<int> local_Adjncy(distribution[world.rank()]);
-  std::vector<int> local_Eweights(distribution[world.rank()]);
-  boost::mpi::scatterv(world, Adjncy.data(), distribution, displacement, local_Adjncy.data(), local_Adjncy.size(), 0);
-  boost::mpi::scatterv(world, Eweights.data(), distribution, displacement, local_Eweights.data(), local_Eweights.size(), 0);
+  int local_size = distribution[world.rank()];
+  std::vector<int> local_Adjncy(local_size);
+  std::vector<int> local_Eweights(local_size);
+  boost::mpi::scatterv(world, Adjncy.data(), distribution, displacement, local_Adjncy.data(), local_size, 0);
+  boost::mpi::scatterv(world, Eweights.data(), distribution, displacement, local_Eweights.data(), local_size, 0);
 
   std::vector<int> local_d(n);
 
   for (int i = 0; i < n - 1; i++) {
     boost::mpi::broadcast(world, d, 0);
+    bool stop = true;
+    bool local_stop = true;
     for (int v = start_v; v < stop_v; v++) {
       for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
         int l_posit = t - Xadj[start_v];
         if (d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
           d[local_Adjncy[l_posit]] = d[v] + local_Eweights[l_posit];
+          local_stop = false;
         }
       }
     }
     std::copy(d.begin(), d.end(), local_d.begin());
     reduce(world, local_d, d, boost::mpi::minimum<int>(), 0);
+    reduce(world, local_stop, stop, boost::mpi::minimum<int>(), 0);
+    boost::mpi::broadcast(world, stop, 0);
+    if (stop) {
+      break;
+    }
   }
 
   return true;

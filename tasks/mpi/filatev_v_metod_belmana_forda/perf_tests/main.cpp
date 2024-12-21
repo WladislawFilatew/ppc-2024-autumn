@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 #include <boost/mpi/timer.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "core/perf/include/perf.hpp"
 #include "mpi/filatev_v_metod_belmana_forda/include/ops_mpi.hpp"
@@ -11,7 +11,7 @@
 
 TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
     boost::mpi::communicator world;
-    int n = 700; 
+    int n = 9000;
     int m = n * (n - 1);
     int start = 0;
     std::vector<int> Adjncy;
@@ -82,7 +82,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
 
 TEST(filatev_v_metod_belmana_forda_mpi, test_task_run) {
     boost::mpi::communicator world;
-    int n = 700; 
+    int n = 9000;
     int m = n * (n - 1);
     int start = 0;
     std::vector<int> Adjncy;
