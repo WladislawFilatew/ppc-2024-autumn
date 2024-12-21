@@ -78,8 +78,8 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
   int delta = n / world.size();
   int ost = n % world.size();
 
-  int start_v = (world.rank() < ost) ? (delta + 1) * world.rank() : (delta + 1) * ost + world.rank() * delta;
-  int stop_v = (world.rank() < ost) ? (delta + 1) * (world.rank() + 1) : (delta + 1) * ost + (world.rank() + 1) * delta;
+  int start_v = (world.rank() < ost) ? (delta + 1) * world.rank() : (delta + 1) * ost + (world.rank() - ost) * delta;
+  int stop_v = (world.rank() < ost) ? (delta + 1) * (world.rank() + 1) : (delta + 1) * ost + (world.rank() - ost + 1) * delta;
 
   if (world.rank() != 0) {
     Xadj.resize(n + 1);
@@ -125,25 +125,25 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
 
   for (int i = 0; i < n - 1; i++) {
     boost::mpi::broadcast(world, d, 0);
-    bool stop = true;
-    bool local_stop = true;
+    // bool stop = true;
+    // bool local_stop = true;
     for (int v = start_v; v < stop_v; v++) {
       if (v > (int)Xadj.size() - 2) continue;
       for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
         int l_posit = t - Xadj[start_v];
         if (d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
           d[local_Adjncy[l_posit]] = d[v] + local_Eweights[l_posit];
-          local_stop = false;
+          //local_stop = false;
         }
       }
     }
     std::copy(d.begin(), d.end(), local_d.begin());
     reduce(world, local_d, d, boost::mpi::minimum<int>(), 0);
-    reduce(world, local_stop, stop, boost::mpi::minimum<int>(), 0);
-    boost::mpi::broadcast(world, stop, 0);
-    if (stop) {
-      break;
-    }
+    // reduce(world, local_stop, stop, boost::mpi::minimum<int>(), 0);
+    // boost::mpi::broadcast(world, stop, 0);
+    // if (stop) {
+    //   break;
+    // }
   }
 
   return true;
