@@ -128,7 +128,7 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     bool stop = true;
     bool local_stop = true;
     for (int v = start_v; v < stop_v; v++) {
-      if (v > Xadj.size() - 2) continue;
+      if (v > (int)Xadj.size() - 2) continue;
       for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
         int l_posit = t - Xadj[start_v];
         if (d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
