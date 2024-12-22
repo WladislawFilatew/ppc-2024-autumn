@@ -11,38 +11,38 @@
 namespace filatev_v_metod_belmana_forda_mpi {
 
 bool GeneratGraf(int n, int m, std::vector<int> &Adjncy, std::vector<int> &Xadj, std::vector<int> &Eweights) {
-	int max = 10;
-	int min = -10;
-	int kol_m = 0;
+  int max = 10;
+  int min = -10;
+  int kol_m = 0;
   int inf = std::numeric_limits<int>::max();
 
-	if (m > n * n) return false;
+  if (m > n * n) return false;
 
-	std::vector<std::vector<int>> matrix(n, std::vector<int>(n,inf));
-	while (kol_m != m) {
-		int j = rand() % n;
-		int i = rand() % n;
-		if (i != j && matrix[i][j] == inf) {
-			matrix[i][j] = rand() % (max - min + 1) + min;
-			kol_m++;
-		}
-	}
+  std::vector<std::vector<int>> matrix(n, std::vector<int>(n, inf));
+  while (kol_m != m) {
+    int j = rand() % n;
+    int i = rand() % n;
+    if (i != j && matrix[i][j] == inf) {
+      matrix[i][j] = rand() % (max - min + 1) + min;
+      kol_m++;
+    }
+  }
 
-	Adjncy.resize(m, 0);
-	Xadj.resize(n + 1);
-	Eweights.resize(m, 0);
+  Adjncy.resize(m, 0);
+  Xadj.resize(n + 1);
+  Eweights.resize(m, 0);
 
-	for (int i = 0, k = 0; i < n; i++) {
-		Xadj[i] = k;
-		for (int j = 0; j < n; j++) {
-			if (i != j && matrix[i][j] != inf) {
-				Adjncy[k] = j;
-				Eweights[k] = matrix[i][j];
-				k++;
-			}
-		}
-	}
-	Xadj[n] = m;
+  for (int i = 0, k = 0; i < n; i++) {
+    Xadj[i] = k;
+    for (int j = 0; j < n; j++) {
+      if (i != j && matrix[i][j] != inf) {
+        Adjncy[k] = j;
+        Eweights[k] = matrix[i][j];
+        k++;
+      }
+    }
+  }
+  Xadj[n] = m;
   return true;
 }
 
