@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 
 #include <boost/mpi/timer.hpp>
-#include <string>
 #include <vector>
 
 #include "core/perf/include/perf.hpp"
@@ -10,7 +9,7 @@
 
 TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
   boost::mpi::communicator world;
-  int n = 9001;
+  int n = 8001;
   int m = n * (n - 1);
   int start = 0;
   std::vector<int> Adjncy;
@@ -31,7 +30,6 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
       for (int j = 0; j < n; j++) {
         if (i != j) {
           Adjncy[k] = j;
-          Eweights[k] = 1;
           k++;
         }
       }
@@ -80,7 +78,7 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
 
 TEST(filatev_v_metod_belmana_forda_mpi, test_task_run) {
   boost::mpi::communicator world;
-  int n = 9001;
+  int n = 8001;
   int m = n * (n - 1);
   int start = 0;
   std::vector<int> Adjncy;
@@ -101,7 +99,6 @@ TEST(filatev_v_metod_belmana_forda_mpi, test_task_run) {
       for (int j = 0; j < n; j++) {
         if (i != j) {
           Adjncy[k] = j;
-          Eweights[k] = 1;
           k++;
         }
       }
