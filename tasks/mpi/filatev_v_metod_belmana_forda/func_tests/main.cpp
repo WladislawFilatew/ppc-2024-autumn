@@ -10,7 +10,7 @@
 
 namespace filatev_v_metod_belmana_forda_mpi {
 
-bool GeneratGraf(int n, int m, std::vector<int>& Adjncy, std::vector<int>& Xadj, std::vector<int>& Eweights) {
+bool GeneratGraf(int n, int m, std::vector<int> &Adjncy, std::vector<int> &Xadj, std::vector<int> &Eweights) {
 	int max = 10;
 	int min = -10;
 	int kol_m = 0;

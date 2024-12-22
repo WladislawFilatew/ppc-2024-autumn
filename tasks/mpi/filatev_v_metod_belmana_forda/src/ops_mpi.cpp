@@ -72,8 +72,10 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
   int delta = n / world.size();
   int ost = n % world.size();
 
-  int start_v = (world.rank() < ost) ? (delta + 1) * world.rank() : (delta + 1) * ost + (world.rank() - ost) * delta;
-  int stop_v = (world.rank() < ost) ? (delta + 1) * (world.rank() + 1) : (delta + 1) * ost + (world.rank() - ost + 1) * delta;
+  int rank = world.rank();
+
+  int start_v = (wrank < ost) ? (delta + 1) * rank : (delta + 1) * ost + (rank - ost) * delta;
+  int stop_v = (rank < ost) ? (delta + 1) * (rank + 1) : (delta + 1) * ost + (rank - ost + 1) * delta;
 
   if (world.rank() != 0) {
     Xadj.resize(n + 1);
@@ -142,7 +144,6 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::post_processing() 
   }
   return true;
 }
-
 
 bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaSeq::validation() {
   internal_order_test();
