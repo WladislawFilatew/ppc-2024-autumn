@@ -45,7 +45,7 @@ std::vector<int> genetatirVectorB(std::vector<int> &matrix, std::vector<int> &ve
 }  // namespace filatev_v_metod_zedela_seq
 
 TEST(filatev_v_metod_zedela_seq, test_pipeline_run) {
-  int size = 500;
+  int size = 1000;
   std::vector<int> matrix(size * size);
   std::vector<int> vecB(size);
   std::vector<double> answer;
@@ -91,7 +91,7 @@ TEST(filatev_v_metod_zedela_seq, test_pipeline_run) {
 }
 
 TEST(filatev_v_metod_zedela_seq, test_task_run) {
-  int size = 500;
+  int size = 1000;
   std::vector<int> matrix(size * size);
   std::vector<int> vecB(size);
   std::vector<double> answer;
