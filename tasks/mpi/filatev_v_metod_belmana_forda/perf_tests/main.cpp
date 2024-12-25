@@ -7,6 +7,62 @@
 #include "core/perf/include/perf.hpp"
 #include "mpi/filatev_v_metod_belmana_forda/include/ops_mpi.hpp"
 
+// TEST(filatev_v_metod_belmana_forda_mpi, test_run) {
+//   boost::mpi::communicator world;
+//   int n = 10000;
+//   int m = n * (n - 1);
+//   int start = 0;
+//   std::vector<int> Adjncy;
+//   std::vector<int> Xadj;
+//   std::vector<int> Eweights;
+//   std::vector<int> d;
+
+//   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
+
+//   if (world.rank() == 0) {
+//     Adjncy.resize(m, 0);
+//     Xadj.resize(n + 1);
+//     Eweights.resize(m, 1);
+//     d.resize(n);
+
+//     for (int i = 0, k = 0; i < n; i++) {
+//       Xadj[i] = k;
+//       for (int j = 0; j < n; j++) {
+//         if (i != j) {
+//           Adjncy[k] = j;
+//           k++;
+//         }
+//       }
+//     }
+//     Xadj[n] = m;
+
+//     taskData->inputs.emplace_back(reinterpret_cast<uint8_t *>(Adjncy.data()));
+//     taskData->inputs.emplace_back(reinterpret_cast<uint8_t *>(Xadj.data()));
+//     taskData->inputs.emplace_back(reinterpret_cast<uint8_t *>(Eweights.data()));
+//     taskData->inputs_count.emplace_back(n);
+//     taskData->inputs_count.emplace_back(m);
+//     taskData->inputs_count.emplace_back(start);
+//     taskData->outputs.emplace_back(reinterpret_cast<uint8_t *>(d.data()));
+//     taskData->outputs_count.emplace_back(n);
+//   }
+
+//   auto metodBelmanaForda = std::make_shared<filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI>(taskData);
+
+//   ASSERT_EQ(metodBelmanaForda->validation(), true);
+//   metodBelmanaForda->pre_processing();
+//   metodBelmanaForda->run();
+//   metodBelmanaForda->post_processing();
+
+  
+//   if (world.rank() == 0) {
+//     std::vector<int> tResh(n, 1);
+//     tResh[0] = 0;
+
+//     // ASSERT_EQ(tResh, d);
+//   }
+// }
+
+
 TEST(filatev_v_metod_belmana_forda_mpi, test_pipeline_run) {
   boost::mpi::communicator world;
   int n = 8000;

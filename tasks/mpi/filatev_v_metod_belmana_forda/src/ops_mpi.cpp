@@ -79,9 +79,11 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
 
   int delta = n / world.size();
   int ost = n % world.size();
+  std::vector<int> local_d(n, inf);
 
   if (world.rank() == 0) {
     d[start] = 0;
+    local_d[start] = 0;
     auto* temp = reinterpret_cast<int*>(taskData->inputs[1]);
     this->Xadj.assign(temp, temp + n + 1);
   } else {
@@ -104,26 +106,20 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     displacement[i] = displacement[i - 1] + distribution[i - 1];
     prev = teck;
   }
-  distribution[0] = 0;
 
   int local_size = distribution[world.rank()];
-  std::vector<int> local_Adjncy;
-  std::vector<int> local_Eweights;
-  std::vector<int> local_d(n, inf);
+  std::vector<int> local_Adjncy(local_size);
+  std::vector<int> local_Eweights(local_size);
 
+  int* temp_Adjncy = nullptr;
+  int* temp_Eweights = nullptr;
   if (world.rank() == 0) {
-    local_d[start] = 0;
-    auto* temp = reinterpret_cast<int*>(taskData->inputs[0]);
-    this->Adjncy.assign(temp, temp + m);
-    temp = reinterpret_cast<int*>(taskData->inputs[2]);
-    this->Eweights.assign(temp, temp + m);
-  } else {
-    local_Adjncy.resize(local_size);
-    local_Eweights.resize(local_size);
+    temp_Adjncy = reinterpret_cast<int*>(taskData->inputs[0]);
+    temp_Eweights = reinterpret_cast<int*>(taskData->inputs[2]);
   }
-
-  boost::mpi::scatterv(world, Adjncy.data(), distribution, displacement, local_Adjncy.data(), local_size, 0);
-  boost::mpi::scatterv(world, Eweights.data(), distribution, displacement, local_Eweights.data(), local_size, 0);
+  
+  boost::mpi::scatterv(world, temp_Adjncy, distribution, displacement, local_Adjncy.data(), local_size, 0);
+  boost::mpi::scatterv(world, temp_Eweights, distribution, displacement, local_Eweights.data(), local_size, 0);
 
   int rank = world.rank();
   int start_v = (rank < ost) ? (delta + 1) * rank : (delta + 1) * ost + (rank - ost) * delta;
@@ -137,16 +133,11 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     for (int v = start_v; v < stop_v; v++) {
       if (v > (int)Xadj.size() - 2) continue;
       if (d[v] == inf) continue;
-      for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
-        int l_posit = t - Xadj[start_v];
-        if (rank == 0 && d[Adjncy[t]] > d[v] + Eweights[t]) {
-          local_d[Adjncy[t]] = d[v] + Eweights[t];
-          d[Adjncy[t]] = local_d[Adjncy[t]];
-          local_stop = false;
-        }
-        if (rank != 0 && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
-          local_d[local_Adjncy[l_posit]] = d[v] + local_Eweights[l_posit];
-          d[local_Adjncy[l_posit]] = local_d[local_Adjncy[l_posit]];
+      int sm = Xadj[start_v];
+      for (int t = Xadj[v] - sm; t < Xadj[v + 1] - sm; t++) {
+        if (d[local_Adjncy[t]] > d[v] + local_Eweights[t]) {
+          local_d[local_Adjncy[t]] = d[v] + local_Eweights[t];
+          d[local_Adjncy[t]] = local_d[local_Adjncy[t]];
           local_stop = false;
         }
       }
