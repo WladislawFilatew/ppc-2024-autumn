@@ -3,6 +3,7 @@
 
 #include <boost/serialization/vector.hpp>
 #include <vector>
+#include <algorithm>
 
 bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::validation() {
   internal_order_test();
@@ -29,9 +30,10 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::pre_processing() {
 std::vector<int> vector_min(const std::vector<int>& a, const std::vector<int>& b) {
     size_t size = a.size();
     std::vector<int> result(size);
-    for (size_t i = 0; i < size; ++i) {
-        result[i] = std::min(a[i], b[i]);
-    }
+   std::transform(a.begin(), a.end(), b.begin(), result.begin(),
+                   [](int a, int b) {
+                       return std::min(a, b);
+                   });
     return result;
 }
 
@@ -138,10 +140,12 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
         int l_posit = t - Xadj[start_v];
         if (rank == 0 && d[v] < inf  && d[Adjncy[t]] > d[v] + Eweights[t]) {
           local_d[Adjncy[t]] = d[v] + Eweights[t];
+          d[Adjncy[t]] = local_d[Adjncy[t]];
           local_stop = false;
         }
         if (rank != 0 && d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
           local_d[local_Adjncy[l_posit]] = d[v] + local_Eweights[l_posit];
+          d[local_Adjncy[l_posit]] = local_d[local_Adjncy[l_posit]];
           local_stop = false;
         }
       }
