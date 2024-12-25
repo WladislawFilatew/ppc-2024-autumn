@@ -30,11 +30,9 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
   internal_order_test();
 
   boost::mpi::broadcast(world, n, 0);
-  boost::mpi::broadcast(world, start, 0);
 
   int inf = std::numeric_limits<int>::max();
   d.assign(n, inf);
-  d[start] = 0;
 
   if (world.size() == 1 || world.size() > n) {
 
@@ -72,6 +70,7 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
   int ost = n % world.size();
 
   if (world.rank() == 0) {
+    d[start] = 0;
     auto* temp = reinterpret_cast<int*>(taskData->inputs[1]);
     this->Xadj.assign(temp, temp + n + 1);
   } else {
@@ -119,24 +118,37 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
 
   std::vector<int> local_d(n);
 
+
+  bool stop = true;
   for (int i = 0; i < n; i++) {
     boost::mpi::broadcast(world, d, 0);
+    bool local_stop = true;
     for (int v = start_v; v < stop_v; v++) {
       if (v > (int)Xadj.size() - 2) continue;
-      for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {  
+      for (int t = Xadj[v]; t < Xadj[v + 1]; t++) {
         int l_posit = t - Xadj[start_v];
-        if (world.rank() == 0 && d[v] < inf && d[Adjncy[t]] > d[v] + Eweights[t]) {
+        if (rank == 0 && d[v] < inf && d[Adjncy[t]] > d[v] + Eweights[t]) {
           d[Adjncy[t]] = d[v] + Eweights[t];
+          local_stop = false;
         }
-        if (world.rank() != 0 && d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
+        if (rank != 0 && d[v] < inf && d[local_Adjncy[l_posit]] > d[v] + local_Eweights[l_posit]) {
           d[local_Adjncy[l_posit]] = d[v] + local_Eweights[l_posit];
+          local_stop = false;
         }
       }
     }
     std::copy(d.begin(), d.end(), local_d.begin());
     reduce(world, local_d, d, boost::mpi::minimum<int>(), 0);
+    reduce(world, local_stop, stop, boost::mpi::minimum<int>(), 0);
+    boost::mpi::broadcast(world, stop, 0);
+    if (stop) {
+      break;
+    }
   }
 
+  if (world.rank() == 0 && !stop) {
+    d.assign(n, -inf);
+  }
   return true;
 }
 
