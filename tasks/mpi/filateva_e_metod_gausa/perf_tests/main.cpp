@@ -34,7 +34,7 @@ std::vector<double> gereratorSLU(std::vector<double> &matrix, std::vector<double
 
 TEST(filateva_e_metod_gausa_mpi, test_pipeline_run) {
   boost::mpi::communicator world;
-  int size = 800;
+  int size = 1000;
   std::vector<double> matrix;
   std::vector<double> vecB;
   std::vector<double> answer;
@@ -82,7 +82,7 @@ TEST(filateva_e_metod_gausa_mpi, test_pipeline_run) {
 
 TEST(filateva_e_metod_gausa_mpi, test_task_run) {
   boost::mpi::communicator world;
-  int size = 800;
+  int size = 1000;
   std::vector<double> matrix;
   std::vector<double> vecB;
   std::vector<double> answer;

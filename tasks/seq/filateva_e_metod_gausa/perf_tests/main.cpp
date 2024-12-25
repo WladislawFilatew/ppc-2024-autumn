@@ -32,7 +32,7 @@ std::vector<double> gereratorSLU(std::vector<double>& matrix, std::vector<double
 }
 
 TEST(filateva_e_metod_gausa_seq, test_pipeline_run) {
-  int size = 800;
+  int size = 1000;
   std::vector<double> matrix(size * size);
   std::vector<double> vecB(size);
   std::vector<double> answer(size);
@@ -75,7 +75,7 @@ TEST(filateva_e_metod_gausa_seq, test_pipeline_run) {
 }
 
 TEST(filateva_e_metod_gausa_seq, test_task_run) {
-  int size = 800;
+  int size = 1000;
   std::vector<double> matrix(size * size);
   std::vector<double> vecB(size);
   std::vector<double> answer(size);
