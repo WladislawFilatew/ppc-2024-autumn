@@ -47,9 +47,9 @@ bool filatev_v_metod_belmana_forda_seq::MetodBelmanaForda::run() {
         }
       }
     }
-    if (stop) {
-      break;
-    }
+    // if (stop) {
+    //   break;
+    // }
   }
 
   if (!stop) {
