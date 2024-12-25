@@ -89,35 +89,35 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
   boost::mpi::scatterv(world, temp_Adjncy, distribution, displacement, local_Adjncy.data(), local_size, 0);
   boost::mpi::scatterv(world, temp_Eweights, distribution, displacement, local_Eweights.data(), local_size, 0);
 
-  // int rank = world.rank();
-  // int start_v = (rank < ost) ? (delta + 1) * rank : (delta + 1) * ost + (rank - ost) * delta;
-  // int stop_v = (rank < ost) ? (delta + 1) * (rank + 1) : (delta + 1) * ost + (rank - ost + 1) * delta;
+  int rank = world.rank();
+  int start_v = (rank < ost) ? (delta + 1) * rank : (delta + 1) * ost + (rank - ost) * delta;
+  int stop_v = (rank < ost) ? (delta + 1) * (rank + 1) : (delta + 1) * ost + (rank - ost + 1) * delta;
 
 
-  // bool stop = true;
-  // for (int i = 0; i < n; i++) {
-  //   all_reduce(world, local_d, d, vector_min);
-  //   bool local_stop = true;
-  //   for (int v = start_v; v < stop_v; v++) {
-  //     if (v > (int)Xadj.size() - 2) continue;
-  //     if (d[v] == inf) continue;
-  //     int sm = Xadj[start_v];
-  //     for (int t = Xadj[v] - sm; t < Xadj[v + 1] - sm; t++) {
-  //       if (d[local_Adjncy[t]] > d[v] + local_Eweights[t]) {
-  //         local_d[local_Adjncy[t]] = d[v] + local_Eweights[t];
-  //         d[local_Adjncy[t]] = local_d[local_Adjncy[t]];
-  //         local_stop = false;
-  //       }
-  //     }
-  //   }
-  //   all_reduce(world, local_stop, stop, boost::mpi::minimum<int>());
-  //   if (stop) {
-  //     break;
-  //   }
-  // }
-  // if (world.rank() == 0 && !stop) {
-  //   d.assign(n, -inf);
-  // }
+  bool stop = true;
+  for (int i = 0; i < n; i++) {
+    all_reduce(world, local_d, d, vector_min);
+    bool local_stop = true;
+    for (int v = start_v; v < stop_v; v++) {
+      if (v > (int)Xadj.size() - 2) continue;
+      if (d[v] == inf) continue;
+      int sm = Xadj[start_v];
+      for (int t = Xadj[v] - sm; t < Xadj[v + 1] - sm; t++) {
+        if (d[local_Adjncy[t]] > d[v] + local_Eweights[t]) {
+          local_d[local_Adjncy[t]] = d[v] + local_Eweights[t];
+          d[local_Adjncy[t]] = local_d[local_Adjncy[t]];
+          local_stop = false;
+        }
+      }
+    }
+    all_reduce(world, local_stop, stop, boost::mpi::minimum<int>());
+    if (stop) {
+      break;
+    }
+  }
+  if (world.rank() == 0 && !stop) {
+    d.assign(n, -inf);
+  }
 
   return true;
 }
