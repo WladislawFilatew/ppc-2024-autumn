@@ -17,7 +17,6 @@ bool filatev_v_metod_belmana_forda_seq::MetodBelmanaForda::pre_processing() {
   this->m = taskData->inputs_count[1];
   this->start = taskData->inputs_count[2];
 
-
   return true;
 }
 

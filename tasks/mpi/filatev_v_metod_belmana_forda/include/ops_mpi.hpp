@@ -28,7 +28,6 @@ class MetodBelmanaFordaMPI : public ppc::core::Task {
   std::vector<int> Xadj;
   std::vector<int> Eweights;
   std::vector<int> d;
-
 };
 
 class MetodBelmanaFordaSeq : public ppc::core::Task {

@@ -1,9 +1,9 @@
 // Filatev Vladislav Metod Belmana Forda
 #include "mpi/filatev_v_metod_belmana_forda/include/ops_mpi.hpp"
 
+#include <algorithm>
 #include <boost/serialization/vector.hpp>
 #include <vector>
-#include <algorithm>
 
 bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::validation() {
   internal_order_test();
@@ -28,13 +28,10 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::pre_processing() {
 }
 
 std::vector<int> vector_min(const std::vector<int>& a, const std::vector<int>& b) {
-    size_t size = a.size();
-    std::vector<int> result(size);
-   std::transform(a.begin(), a.end(), b.begin(), result.begin(),
-                   [](int a, int b) {
-                       return std::min(a, b);
-                   });
-    return result;
+  size_t size = a.size();
+  std::vector<int> result(size);
+  std::transform(a.begin(), a.end(), b.begin(), result.begin(), [](int a, int b) { return std::min(a, b); });
+  return result;
 }
 
 bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
@@ -85,14 +82,13 @@ bool filatev_v_metod_belmana_forda_mpi::MetodBelmanaFordaMPI::run() {
     temp_Adjncy = reinterpret_cast<int*>(taskData->inputs[0]);
     temp_Eweights = reinterpret_cast<int*>(taskData->inputs[2]);
   }
-  
+
   boost::mpi::scatterv(world, temp_Adjncy, distribution, displacement, local_Adjncy.data(), local_size, 0);
   boost::mpi::scatterv(world, temp_Eweights, distribution, displacement, local_Eweights.data(), local_size, 0);
 
   int rank = world.rank();
   int start_v = (rank < ost) ? (delta + 1) * rank : (delta + 1) * ost + (rank - ost) * delta;
   int stop_v = (rank < ost) ? (delta + 1) * (rank + 1) : (delta + 1) * ost + (rank - ost + 1) * delta;
-
 
   bool stop = true;
   for (int i = 0; i < n; i++) {
