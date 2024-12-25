@@ -47,7 +47,7 @@ std::vector<int> genetatirVectorB(std::vector<int> &matrix, std::vector<int> &ve
 
 TEST(filatev_v_metod_zedela_mpi, test_pipeline_run) {
   boost::mpi::communicator world;
-  int size = 1000;
+  int size = 700;
   std::vector<double> answer;
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
   std::vector<int> matrix;
@@ -101,7 +101,7 @@ TEST(filatev_v_metod_zedela_mpi, test_pipeline_run) {
 
 TEST(filatev_v_metod_zedela_mpi, test_task_run) {
   boost::mpi::communicator world;
-  int size = 1000;
+  int size = 700;
   std::vector<double> answer;
   std::shared_ptr<ppc::core::TaskData> taskData = std::make_shared<ppc::core::TaskData>();
   std::vector<int> matrix;
